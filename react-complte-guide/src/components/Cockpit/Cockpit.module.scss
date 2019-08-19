@@ -1,0 +1,20 @@
+.myBtn, .loginBtn {
+    padding: 10px 8px;
+    color: white;
+    outline: none;
+    border: 1px solid #eee;
+    &:hover {
+        background: lightgreen;
+        color: black;
+    }
+}
+.loginBtn {
+  background: green;
+}
+.red {
+    color: red;
+  }
+  
+  .bold {
+    font-weight: bold;
+  }
