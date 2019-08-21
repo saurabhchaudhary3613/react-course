@@ -16,18 +16,15 @@ const INGREDIENTS_PRICES = {
 };
 
 class BurgerBuilder extends Component {
+
     state = {
-        ingredients: {
-            salad: 0,
-            bacon: 0,
-            cheese: 0,
-            meat: 0
-        },
+        ingredients: null,
         totalPrice: 4,
         purchaseable: false,
         purchasing: false,
-        loading: false
-    }
+        loading: false,
+        error: false
+    };
 
     updatePurchaseState = (ingredients) => {
         
@@ -78,9 +75,11 @@ class BurgerBuilder extends Component {
     purchaseHandler = () => {
         this.setState({purchasing: true})
     };
+
     purchseCancelHandler = () => {
         this.setState({purchasing: false})
     };
+
     purchaseContinueHandler = () => {
         console.log('continue');
         this.setState({loading: true});
@@ -106,8 +105,29 @@ class BurgerBuilder extends Component {
             console.log(error);
             this.setState({loading: false, purchasing: false});
         });
-    }
-    
+        
+    };
+    // calculateInitialPrice = (ingredients) => {
+    //     return Object.keys(ingredients)
+    //     .map(ingredientKey => (ingredients[ingredientKey] * INGREDIENTS_PRICES[ingredientKey]) + this.state.totalPrice)
+    //     .reduce((acumulator, element) => acumulator + element, 0)
+    // }
+
+    componentDidMount() {
+
+        axios.get('https://burger-builder-f7508.firebaseio.com/ingredients/.json')
+            .then(response => {
+                console.log(response.data);
+                // const totalPrice = this.calculateInitialPrice(response.data)
+                this.setState({
+                    ingredients: response.data
+                })
+            })
+            .catch(error => {
+                console.log(error);
+                this.setState({error: true})
+            })
+    };  
 
     render() {
         const disabledInfo = {
@@ -116,27 +136,38 @@ class BurgerBuilder extends Component {
         for(let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0
         }
-        let orderSummary =  <OrderSummary ingredients={this.state.ingredients} 
-        purchaseContinued={this.purchaseContinueHandler}
-        price={this.state.totalPrice.toFixed(2)}
-        purchasedCancelled={this.purchseCancelHandler}/>;
 
+        let orderSummary = null;
+        
+        let burger = this.state.error ? <p>Ingredients can't be loaded !</p> : <Spinner />;
+        if(this.state.ingredients) {
+            burger = (
+                <Aux>
+                    <Burger ingredients={this.state.ingredients}/>
+                    <BuildControls ingredientAdded={this.addIngredientsHandler} 
+                        ingredientRemoved={this.removeIngredientsHandler}
+                        price={this.state.totalPrice}
+                        purchaseable={this.state.purchaseable}
+                        ordered={this.purchaseHandler}
+                        disabled={disabledInfo}
+                    />
+                </Aux>
+            );
+            orderSummary =  <OrderSummary ingredients={this.state.ingredients} 
+            purchaseContinued={this.purchaseContinueHandler}
+            price={this.state.totalPrice.toFixed(2)}
+            purchasedCancelled={this.purchseCancelHandler}/>;
+        }
         if(this.state.loading) {
             orderSummary = <Spinner />;
-        } 
+        }
+        
         return (
             <Aux>
                 <Modal show={this.state.purchasing} modalClose={this.purchseCancelHandler}> 
                    {orderSummary}
                 </Modal>
-                <Burger ingredients={this.state.ingredients}/>
-                <BuildControls ingredientAdded={this.addIngredientsHandler} 
-                ingredientRemoved={this.removeIngredientsHandler}
-                price={this.state.totalPrice}
-                purchaseable={this.state.purchaseable}
-                ordered={this.purchaseHandler}
-                disabled={disabledInfo}
-                />
+                {burger}
             </Aux>
            
         );
