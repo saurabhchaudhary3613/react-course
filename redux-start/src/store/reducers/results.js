@@ -1,10 +1,11 @@
-import * as actionTypes from '../actions';
+import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
     results: []
 };
 const reducer = (state = initialState, action) => {
 
+    // TODO-> can be refacotred as done counter reducer
     switch(action.type) {
       
             case actionTypes.STORE_RESULT:
@@ -23,9 +24,9 @@ const reducer = (state = initialState, action) => {
                     ...state,
                     results: updatedArray
                 }
+            default: 
+                return state;
     }
-
-    return state;
 };
 
 export default reducer;
