@@ -7,6 +7,7 @@ import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import * as orderActions from '../../../store/actions/index';
+import { checkValidity } from '../../../shared/validate';
 
 class ContactData extends Component {
     state = {
@@ -98,7 +99,8 @@ class ContactData extends Component {
         event.preventDefault();
         // this.setState({loading: true});
         const formData = {};
-        for(let key in this.state.orderForm) {
+        let key;
+        for(key in this.state.orderForm) {
             formData[key] = this.state.orderForm[key].value;
         }
         const order = {
@@ -111,28 +113,6 @@ class ContactData extends Component {
         
     };
 
-    validity(value, rules) {
-        let isValid = true;
-
-        if(!rules) {
-            return true;
-        }
-        
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid;
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        return isValid;
-    };
-
     inputChangedHandler = (event, inputIdentifire) => {
         const updatedOrderForm = {
             ...this.state.orderForm
@@ -142,20 +122,21 @@ class ContactData extends Component {
         };
 
         updateFormElement.value = event.target.value;
-        updateFormElement.valid = this.validity(updateFormElement.value, updateFormElement.validation);
+        updateFormElement.valid = checkValidity(updateFormElement.value, updateFormElement.validation);
         updateFormElement.touched = true;
         updatedOrderForm[inputIdentifire] = updateFormElement;
         let formIsValid = true;
-        for(let inputIdentifire in updatedOrderForm) {
-            formIsValid = updatedOrderForm[inputIdentifire].valid && formIsValid;
+        let inptIdentifire;
+        for(inptIdentifire in updatedOrderForm) {
+            formIsValid = updatedOrderForm[inptIdentifire].valid && formIsValid;
         }
         this.setState({orderForm: updatedOrderForm, formIsValid: formIsValid});
-        console.log(updateFormElement);
 
     };
     render() {
         const formElementArray = [];
-        for(let key in this.state.orderForm) {
+        let key;
+        for(key in this.state.orderForm) {
             formElementArray.push({
                 id: key,
                 config: this.state.orderForm[key]

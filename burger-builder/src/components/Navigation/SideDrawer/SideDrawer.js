@@ -11,7 +11,6 @@ const sideDrawer = (props) => {
     if (props.open) {
         attachedClasses = [classes.Sidedrawer, classes.Open];
     }
-    console.log(props.open)
     return(
         <Aux>
             <Backdrop className={classes.DesktopOnly} show={props.open} modalClicked={props.closed}/>

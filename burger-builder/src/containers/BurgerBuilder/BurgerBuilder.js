@@ -48,7 +48,6 @@ class BurgerBuilder extends Component {
         this.props.history.push('/checkout');
     };
     componentDidMount() {
-        console.log(this.props);
         this.props.onInitIngredients();
     };
 
@@ -56,7 +55,8 @@ class BurgerBuilder extends Component {
         const disabledInfo = {
             ...this.state.ingredients
         };
-        for(let key in disabledInfo) {
+        let key;
+        for(key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0
         }
 
@@ -64,9 +64,7 @@ class BurgerBuilder extends Component {
 
         let burger = this.props.error ? <p>Ingredients can't be loaded !</p> : <Spinner />;
         if(this.props.ings) {
-            console.log(this.props.ings);
             burger = (
-                
                 <Aux>
                     <Burger ingredients={this.props.ings}/>
                     <BuildControls ingredientAdded={this.props.onIngredientsAdded}

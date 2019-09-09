@@ -2,9 +2,9 @@ import React from 'react';
 import classes from './Order.module.scss';
 
 const order = (props) => {
-    console.log(props);
     const ingredients = [];
-    for (let ingredientName in props.ingredients) {
+    let ingredientName;
+    for (ingredientName in props.ingredients) {
         ingredients.push({
             name: ingredientName,
             amount: props.ingredients[ingredientName]

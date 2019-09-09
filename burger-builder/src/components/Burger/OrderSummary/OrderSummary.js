@@ -6,7 +6,7 @@ class OrderSummary extends Component {
 
     // This should be the functional component, doesn,t have to be a class
     componentDidUpdate() {
-        console.log('component will update');
+        // console.log('component will update');
     }
 
     render() {
